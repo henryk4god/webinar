@@ -574,4 +574,49 @@ function copyResult() {
     // Use the Clipboard API
     navigator.clipboard.writeText(text).then(() => {
         // Visual feedback
-        const originalText =
+        const originalText = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<span class="copy-icon">✓</span> Copied!';
+        
+        setTimeout(() => {
+            copyBtn.innerHTML = originalText;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+        alert('Failed to copy text to clipboard. Please select and copy manually.');
+    });
+}
+
+// Navigate to previous prompt
+function goToPreviousPrompt() {
+    if (currentPromptIndex > 0) {
+        currentPromptIndex--;
+        renderCurrentPrompt();
+        updateNavigationButtons();
+        
+        // Clear result when navigating
+        resultContent.innerHTML = '<p class="placeholder-text">Your generated prompt will appear here</p>';
+    }
+}
+
+// Navigate to next prompt or phase
+function goToNextPhase() {
+    const isLastPrompt = currentPromptIndex === currentPrompts.length - 1;
+    const isLastPhase = currentPhase === '5';
+    
+    if (!isLastPrompt) {
+        // Go to next prompt in current phase
+        currentPromptIndex++;
+        renderCurrentPrompt();
+        updateNavigationButtons();
+    } else if (!isLastPhase) {
+        // Go to next phase
+        const nextPhase = parseInt(currentPhase) + 1;
+        selectPhase(nextPhase.toString());
+    }
+    
+    // Clear result when navigating
+    resultContent.innerHTML = '<p class="placeholder-text">Your generated prompt will appear here</p>';
+}
+
+// Initialize the app when DOM is loaded
+document.addEventListener('DOMContentLoaded', init);
